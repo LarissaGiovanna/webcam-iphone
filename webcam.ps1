@@ -33,9 +33,23 @@ function Get-LockState {
 }
 
 function Get-CameraRequest {
+    # 1. Verifica Zoom
     $zoomAtivo = Get-Process "Zoom" -ErrorAction SilentlyContinue
+    
+    # 2. Verifica Brave (somente abas do Meet)
     $braveAtivo = Get-Process "brave" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -match "Meet" }
-    return ($null -ne $zoomAtivo -or $null -ne $braveAtivo)
+    
+    # 3. Verifica OBS Studio (64 e 32 bits)
+    $obsAtivo = Get-Process "obs64", "obs" -ErrorAction SilentlyContinue
+    
+    # 4. Verifica App de Câmera nativo do Windows
+    $winCameraAtiva = Get-Process "WindowsCamera" -ErrorAction SilentlyContinue
+
+    if ($zoomAtivo -or $braveAtivo -or $obsAtivo -or $winCameraAtiva) {
+        return $true
+    }
+    
+    return $false
 }
 
 # ==========================================
