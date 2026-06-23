@@ -45,7 +45,14 @@ function Get-CameraRequest {
     # 4. Verifica App de Câmera nativo do Windows
     $winCameraAtiva = Get-Process "WindowsCamera" -ErrorAction SilentlyContinue
 
-    if ($zoomAtivo -or $braveAtivo -or $obsAtivo -or $winCameraAtiva) {
+    # 5. Verifica Discord
+    $discordAtivo = Get-Process "Discord" -ErrorAction SilentlyContinue
+    
+    # 6. Verifica Gravador de Voz do Windows (Win 11 e Win 10)
+    $gravadorAtivo = Get-Process "SoundRec", "VoiceRecorder" -ErrorAction SilentlyContinue
+
+    # Se qualquer um deles estiver rodando, aciona o gatilho
+    if ($zoomAtivo -or $braveAtivo -or $obsAtivo -or $winCameraAtiva -or $discordAtivo -or $gravadorAtivo) {
         return $true
     }
     
