@@ -56,16 +56,17 @@ function Get-CameraRequest {
 # LÓGICA PRINCIPAL (RODANDO NO FUNDO)
 # ==========================================
 $CameraAtiva = $false
+$UltimoHeartbeat = Get-Date
 
 while ($true) {
     $CameraSolicitada = Get-CameraRequest 
 
+    # 1. PC pediu a câmera e ela está fechada
     if ($CameraSolicitada -and -not $CameraAtiva) {
         
         $estado = Get-LockState
         
         if ($estado -eq "1") {
-            # Dispara a notificação do Windows e um aviso sonoro
             Show-Notification -Titulo "Camera Solicitada" -Mensagem "Aperte o botao Home 2x no iPhone para liberar o acesso." -Icone Warning
             [Console]::Beep(800, 400)
             
@@ -78,10 +79,23 @@ while ($true) {
         Show-Notification -Titulo "Camera Liberada" -Mensagem "Ligando a camera no iPhone..." -Icone Info
         ssh -q -o ConnectTimeout=5 root@$iPhoneIP "uiopen --bundleid iriun.usb.webcam >/dev/null 2>&1"
         $CameraAtiva = $true
+        $UltimoHeartbeat = Get-Date # Registra a hora que abrimos
 
+    # 2. PC continua usando a câmera (O HEARTBEAT)
+    } elseif ($CameraSolicitada -and $CameraAtiva) {
+        
+        $TempoDecorrido = (Get-Date) - $UltimoHeartbeat
+        
+        # A cada 20 segundos, manda um pulso para o iOS não dormir
+        if ($TempoDecorrido.TotalSeconds -ge 20) {
+            ssh -q -o ConnectTimeout=5 root@$iPhoneIP "uiopen --bundleid iriun.usb.webcam >/dev/null 2>&1"
+            $UltimoHeartbeat = Get-Date
+        }
+
+    # 3. PC parou de usar a câmera
     } elseif (-not $CameraSolicitada -and $CameraAtiva) {
         
-        Show-Notification -Titulo "Camera Encerrada" -Mensagem "Desligando camera..." -Icone Info
+        Show-Notification -Titulo "Camera Desligada" -Mensagem "Desligando camera..." -Icone Info
         ssh -q -o ConnectTimeout=5 root@$iPhoneIP "killall webcam >/dev/null 2>&1"
         $CameraAtiva = $false
     }
