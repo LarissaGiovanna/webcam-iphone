@@ -52,7 +52,7 @@ while ($true) {
         
         if ($estado -eq "1") {
             # Dispara a notificação do Windows e um aviso sonoro
-            Show-Notification -Titulo "Câmera Solicitada" -Mensagem "Aperte o botão Início 2x no iPhone para liberar o acesso." -Icone Warning
+            Show-Notification -Titulo "Camera Solicitada" -Mensagem "Aperte o botao Home 2x no iPhone para liberar o acesso." -Icone Warning
             [Console]::Beep(800, 400)
             
             while ($estado -ne "0") {
@@ -61,13 +61,13 @@ while ($true) {
             }
         }
         
-        Show-Notification -Titulo "Iriun Webcam" -Mensagem "Acesso liberado! Ligando a câmera no iPhone..." -Icone Info
+        Show-Notification -Titulo "Camera Liberada" -Mensagem "Ligando a camera no iPhone..." -Icone Info
         ssh -q -o ConnectTimeout=5 root@$iPhoneIP "uiopen --bundleid iriun.usb.webcam >/dev/null 2>&1"
         $CameraAtiva = $true
 
     } elseif (-not $CameraSolicitada -and $CameraAtiva) {
         
-        Show-Notification -Titulo "Iriun Webcam" -Mensagem "Reunião encerrada. Câmera desligada." -Icone Info
+        Show-Notification -Titulo "Camera Encerrada" -Mensagem "Desligando camera..." -Icone Info
         ssh -q -o ConnectTimeout=5 root@$iPhoneIP "killall webcam >/dev/null 2>&1"
         $CameraAtiva = $false
     }
