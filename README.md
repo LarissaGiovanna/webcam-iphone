@@ -194,8 +194,8 @@ OBS.: Você pode adicionar outros programas para ativar a câmera também apenas
 ![resumo](docs/resumo.png)
 
 12. Após isso, abrirá uma janela de Propriedades e faça as seguintes configurações:
-12.1. Na aba Geral: Marque a opção Executar com privilégios mais altos (necessário para ler o nome das janelas dos outros programas).
-12.2. Na aba Condições: Desmarque a caixa "Iniciar a tarefa apenas se o computador estiver ligado à rede elétrica" (para garantir que funciona mesmo que esteja a utilizar um portátil com bateria).
+-  Na aba Geral: Marque a opção Executar com privilégios mais altos (necessário para ler o nome das janelas dos outros programas).
+-  Na aba Condições: Desmarque a caixa "Iniciar a tarefa apenas se o computador estiver ligado à rede elétrica" (para garantir que funciona mesmo que esteja a utilizar um portátil com bateria).
 13. Clique em OK
 
 Com esses passos, o script rodará em segundo plano toda vez que o computador for iniciado e verificará os apps que estão pedindo solicitação da câmera.
