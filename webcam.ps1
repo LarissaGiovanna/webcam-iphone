@@ -33,30 +33,21 @@ function Get-LockState {
 }
 
 function Get-CameraRequest {
-    # 1. Verifica Zoom
-    $zoomAtivo = Get-Process "Zoom" -ErrorAction SilentlyContinue
+    # Ele testa na ordem e retorna o primeiro que encontrar aberto
     
-    # 2. Verifica Brave (somente abas do Meet)
-    $braveAtivo = Get-Process "brave" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -match "Meet" }
+    if (Get-Process "Zoom" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle }) { return "Zoom" }
     
-    # 3. Verifica OBS Studio (64 e 32 bits)
-    $obsAtivo = Get-Process "obs64", "obs" -ErrorAction SilentlyContinue
+    if (Get-Process "brave" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -match "Meet" }) { return "Brave (Google Meet)" }
     
-    # 4. Verifica App de Câmera nativo do Windows
-    $winCameraAtiva = Get-Process "WindowsCamera" -ErrorAction SilentlyContinue
+    if (Get-Process "obs64", "obs" -ErrorAction SilentlyContinue) { return "OBS Studio" }
+    
+    if (Get-Process "WindowsCamera" -ErrorAction SilentlyContinue) { return "Camera do Windows" }
+    
+    if (Get-Process "Discord" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle }) { return "Discord" }
+    
+    if (Get-Process "SoundRec", "VoiceRecorder" -ErrorAction SilentlyContinue) { return "Gravador de Voz" }
 
-    # 5. Verifica Discord
-    $discordAtivo = Get-Process "Discord" -ErrorAction SilentlyContinue
-    
-    # 6. Verifica Gravador de Voz do Windows (Win 11 e Win 10)
-    $gravadorAtivo = Get-Process "SoundRec", "VoiceRecorder" -ErrorAction SilentlyContinue
-
-    # Se qualquer um deles estiver rodando, aciona o gatilho
-    if ($zoomAtivo -or $braveAtivo -or $obsAtivo -or $winCameraAtiva -or $discordAtivo -or $gravadorAtivo) {
-        return $true
-    }
-    
-    return $false
+    return $null
 }
 
 # ==========================================
