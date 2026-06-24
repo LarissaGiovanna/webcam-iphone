@@ -54,22 +54,23 @@ sudo palera1n -f
 ```
 4. Conecte seu iPhone no computador e siga as instruções do palera1n para fazer o jailbreak no iPhone.
 5. Se der tudo certo, seu iPhone vai receber os códigos e ficará assim:
-[iphone brickando](docs/iphone-brickando.jpg)
+![iphone brickando](docs/iphone-brickando.jpg)
 6. Após esse processo, o celular irá iniciar normalmente e aparecerá um app do palera1n:
-
+![app palera1n](docs/palera_app.JPG)
 7. Abra ele e aperte em Install e selecione o Sileo.
 8. Coloque uma senha para quando formos colcoar o comando `sudo`:
 ![sudo](docs/sudo.png)
 9. Após isso, o app Sileo aparecerá na sua página inicial:
-
+![sileo app](docs/sileo_app.JPG)
 Para mais informações, acesse a documentação oficial do [palera1n](https://docs.website-msw.pages.dev/docs/get-started/installing-palera1n-linux/).
 
 ### 2. Instalação de dependências
 1. Abra o Sileo, vá na aba de fontes e clique no +:
-
+![plus](docs/plus.JPG)
 2. Adicione as seguintes fontes (cole essas urls e aperte em Adicionar Fonte):
-- `https://repo.chariz.io/`
-- `https://havoc.app/`
+        - `https://repo.chariz.io/`
+        - `https://havoc.app/`
+![fonte](docs/fonte.JPG)
 
 3. Vá em Procurar e busque esses pacotes e instale:
 - OpenSSH (Repo: Chariz)
@@ -77,11 +78,11 @@ Para mais informações, acesse a documentação oficial do [palera1n](https://d
 4. Vá nas Configurações do iPhone e vá em Wi-FI
 5. Aperte no *i* do lado do nome da sua rede
 6. Desça até o final da página e procure por Configurar IP e selecione Manual:
-
+![selecionar manual](docs/selecionar-manual.JPG)
 7. Coloque um novo IP e a máscara de sub-rede:
-
+![manual ip](docs/manual_ip.JPG)
 8. Abra o NewTerm:
-
+![newTerm](docs/new-term.JPG)
 9. Digite `passwd root` e defina uma nova senha (a senha atual é *alpine*)
 10. Altere a senha também para o user mobile: `passwd mobile`
 
@@ -132,5 +133,36 @@ ps aux | grep -i NOME_DO_APP
 7. Após isso, para testar se está funcionando, coloque esses comandos ainda no terminal do seu pc:
 - Para abrir o app: `uiopen --bundleid SEU_BUNDLE_ID`
 - Para fechar o app: `killall NOME_DO_PROCESSO`
+
 Se o app abrir e fechar corretamente, podemos partir para o próximo passo.
 
+### 5. Configuração do Script
+1. Baixe o [arquivo daqui do repositório](webcam.ps1) e salve na sua pasta de preferência e guarde esse endereço
+2. Abra o arquivo no Bloco de Notas ou no seu editor de código de preferência (ex: VSCode)
+3. Procure pela variável `$iPhoneIP` e coloque o seu IP que foi definido nos passos anteriores
+
+OBS.: Você pode adicionar outros programas para ativar a câmera também apenas adicionando mais um `if` na função `Get-CameraRequest`, seguindo o mesmo padrão do código.:
+![function](docs/function.png)
+4. Aperte `Win` e procure pelo Agendador de Tarefas:
+![agendador](docs/agendador.png)
+5. Na direita, procure por Criar Tarefa Básica:
+![tarefa](docs/tarefa.png)
+6. Dê um nome, por exemplo, Monitor iPhone Webcam, e avance:
+![nome tarefa](docs/nome-tarefa.png)
+7. No Disparador, selecione Ao iniciar sessão (Ao fazer logon) e avance:
+![logon](docs/logon.png)
+8. Na Ação, escolha Iniciar um programa e avance.
+9. Em Programa/script, digite: powershell.exe
+10. No campo Adicione os argumentos, cole a linha abaixo (Lembre-se de corrigir o caminho exato onde guardou o seu arquivo .ps1):
+```shell
+-WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\Caminho\Para\O\Seu\webcam.ps1"
+```
+![argumentos](docs/argumentos.png)
+11. Avance, marque a opção Abrir a caixa de diálogo Propriedades desta tarefa ao clicar em Concluir e clique em Concluir.
+![resumo](docs/resumo.png)
+12. Após isso, abrirá uma janela de Propriedades e faça as seguintes configurações:
+12.1. Na aba Geral: Marque a opção Executar com privilégios mais altos (necessário para ler o nome das janelas dos outros programas).
+12.2. Na aba Condições: Desmarque a caixa "Iniciar a tarefa apenas se o computador estiver ligado à rede elétrica" (para garantir que funciona mesmo que esteja a utilizar um portátil com bateria).
+13. Clique em OK
+
+Com esses passos, o script rodará em segundo plano toda vez que o computador for iniciado e verificará os apps que estão pedindo solicitação da câmera.
